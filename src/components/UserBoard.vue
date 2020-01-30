@@ -2,6 +2,7 @@
   <div class="hello">
     <h1>Welcome to regular users page</h1>
     <h2>{{ msg }}</h2>
+    <button @click.prevent="logout">Logout</button>
   </div>
 </template>
 <script>
@@ -10,6 +11,22 @@ export default {
     return {
       msg: "The commoners"
     };
+  },
+  methods: {
+    logout() {
+      this.$http
+        .post("http://localhost:3000/logout", {})
+        .then(response => {
+          debugger;
+          localStorage.removeItem("user");
+          localStorage.removeItem("jwt");
+          console.log("logged out");
+          this.$router.push({ name: "login" });
+        })
+        .catch(function(error) {
+          console.error(error.response);
+        });
+    }
   }
 };
 </script>

@@ -2,7 +2,7 @@
 const express = require("express");
 const DB = require("./db");
 const config = require("./config");
-const bcrypt = require("bcrypt");
+const bcrypt = require("bcrypt-nodejs");
 const jwt = require("jsonwebtoken");
 const bodyParser = require("body-parser");
 
@@ -25,7 +25,7 @@ app.use(allowCrossDomain);
 
 router.post("/register", function(req, res) {
   db.insert(
-    [req.body.name, req.body.email, bcrypt.hashSync(req.body.password, 8)],
+    [req.body.name, req.body.email, bcrypt.hashSync(req.body.password)],
     function(err) {
       if (err)
         return res
@@ -58,7 +58,7 @@ router.post("/register", function(req, res) {
 
 router.post("/register-admin", function(req, res) {
   db.insertAdmin(
-    [req.body.name, req.body.email, bcrypt.hashSync(req.body.password, 8), 1],
+    [req.body.name, req.body.email, bcrypt.hashSync(req.body.password), 1],
     function(err) {
       if (err)
         return res
@@ -98,6 +98,10 @@ router.post("/login", (req, res) => {
       user: user
     });
   });
+});
+
+router.post("/logout", function(req, res) {
+  return res.status(200).send({ auth: false, token: null });
 });
 
 app.use(router);
